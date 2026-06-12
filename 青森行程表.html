@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>青森 5天4夜 ｜ 文青慢旅行程表 2026.06.18–06.22</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;800&family=Zen+Maru+Gothic:wght@400;500;700&family=Noto+Serif+TC:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#f7f2e8; --paper:#fffdf7; --ink:#332f29; --ink-soft:#6b6357;
+  --indigo:#46557a; --indigo-deep:#33405e; --terra:#bd6b4a; --sage:#84926f;
+  --gold:#c9a44c; --line:#e3dac9; --shadow:0 10px 30px rgba(70,60,40,.08);
+  --serif:"Shippori Mincho","Noto Serif TC",serif;
+  --sans:"Zen Maru Gothic","Noto Sans TC",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--cream);color:var(--ink);font-family:var(--sans);line-height:1.75;
+  background-image:radial-gradient(rgba(180,160,120,.06) 1px,transparent 1px);background-size:22px 22px}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+a{color:var(--indigo)}
+img{display:block}
+
+/* ── Hero ── */
+.hero{padding:72px 0 40px;text-align:center;position:relative;overflow:hidden}
+.hero .kicker{letter-spacing:.5em;font-size:.8rem;color:var(--terra);font-weight:700;text-indent:.5em}
+.hero h1{font-family:var(--serif);font-size:clamp(2.4rem,7vw,4rem);font-weight:800;letter-spacing:.18em;margin:.25em 0 .1em;color:var(--indigo-deep)}
+.hero .sub{font-family:var(--serif);color:var(--ink-soft);font-size:1.05rem;letter-spacing:.2em}
+.hero .dates{display:inline-block;margin-top:18px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px 26px;letter-spacing:.12em;color:var(--ink-soft);font-size:.95rem}
+.hero .seal{position:absolute;right:8%;top:46px;width:64px;height:64px;border:2px solid var(--terra);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;color:var(--terra);font-family:var(--serif);font-weight:800;
+  transform:rotate(12deg);font-size:1.15rem;letter-spacing:.1em;opacity:.85}
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:24px}
+.chip{background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:7px 18px;font-size:.85rem;color:var(--ink-soft);box-shadow:var(--shadow)}
+.chip b{color:var(--indigo)}
+
+/* ── Section title ── */
+.sec{margin:64px 0 26px;text-align:center}
+.sec .en{letter-spacing:.4em;font-size:.72rem;color:var(--terra);font-weight:700;text-transform:uppercase;text-indent:.4em}
+.sec h2{font-family:var(--serif);font-size:1.7rem;letter-spacing:.25em;color:var(--indigo-deep);margin-top:4px}
+.sec .line{width:54px;height:3px;background:var(--gold);margin:14px auto 0;border-radius:2px}
+
+/* ── Map ── */
+.map-card{background:var(--paper);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:26px;overflow:hidden}
+.map-crumb{display:flex;gap:8px;align-items:center;justify-content:center;margin-bottom:14px;font-size:.85rem;color:var(--ink-soft)}
+.map-crumb button{border:1px solid var(--line);background:var(--cream);border-radius:999px;padding:5px 16px;cursor:pointer;font-family:var(--sans);font-size:.85rem;color:var(--ink-soft);transition:.25s}
+.map-crumb button.on{background:var(--indigo);color:#fff;border-color:var(--indigo)}
+.map-crumb button:hover{transform:translateY(-1px)}
+.map-stage{position:relative;width:100%;aspect-ratio:16/9;background:linear-gradient(180deg,#eef0f3,#f6f3ea);border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+.map-layer{position:absolute;inset:0;transition:opacity .6s ease,transform .8s cubic-bezier(.6,.05,.2,1)}
+.map-layer.hide{opacity:0;pointer-events:none}
+#worldSvg{width:100%;height:100%;cursor:pointer}
+#worldSvg .land{fill:#dcd5c2;stroke:#c9c0a8;stroke-width:.6}
+#worldSvg .jp{fill:#bd6b4a;stroke:#a05538;cursor:pointer;transition:.3s}
+#worldSvg .jp:hover{fill:#d07c58}
+.world-zoomed #worldG{transform:scale(3.1) translate(-691px,-57px)}
+#worldG{transition:transform .9s cubic-bezier(.65,.05,.25,1);transform-origin:0 0}
+#aomoriSvg{width:100%;height:100%}
+#aomoriSvg .pref{fill:#e9e2cf;stroke:#c9bfa4;stroke-width:1.4}
+#aomoriSvg .sea-label,#worldSvg .sea-label{font-family:var(--serif);fill:#9aa6bb;font-size:10px;letter-spacing:.3em}
+.pin{cursor:pointer}
+.pin circle.dot{fill:var(--terra);stroke:#fff;stroke-width:1.6;transition:.25s}
+.pin:hover circle.dot{r:7;fill:var(--indigo)}
+.pin circle.pulse{fill:none;stroke:var(--terra);stroke-width:1.2;opacity:.7;animation:pulse 2.2s infinite}
+@keyframes pulse{0%{r:5;opacity:.8}100%{r:16;opacity:0}}
+.pin text{font-family:var(--sans);font-size:9.5px;fill:var(--ink);font-weight:700;paint-order:stroke;stroke:#fffdf7;stroke-width:3px;stroke-linejoin:round}
+.pin .day-tag{font-size:7.5px;fill:var(--indigo);font-weight:700}
+.map-hint{text-align:center;color:var(--ink-soft);font-size:.85rem;margin-top:12px}
+.flight-arc{fill:none;stroke:var(--indigo);stroke-width:1.4;stroke-dasharray:4 4;opacity:.85;animation:dash 30s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-300}}
+
+/* ── Info cards ── */
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.info-card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px 24px;box-shadow:var(--shadow);transition:.3s}
+.info-card:hover{transform:translateY(-3px)}
+.info-card h3{font-family:var(--serif);color:var(--indigo-deep);letter-spacing:.15em;font-size:1.05rem;display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.info-card h3 .ic{width:34px;height:34px;border-radius:10px;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.info-card p{font-size:.88rem;color:var(--ink-soft)}
+.info-card .big{color:var(--ink);font-weight:700;font-size:.95rem}
+.info-card .tag{display:inline-block;background:#eef1f6;color:var(--indigo);border-radius:6px;padding:1px 8px;font-size:.78rem;margin:2px 4px 2px 0}
+
+/* ── Outfit ── */
+.outfit-band{background:linear-gradient(135deg,#46557a,#5a6c94);border-radius:20px;color:#f4f1e8;padding:30px 32px;box-shadow:var(--shadow)}
+.outfit-band h3{font-family:var(--serif);letter-spacing:.2em;font-size:1.2rem;margin-bottom:8px;color:#fff}
+.outfit-band .temp{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0}
+.outfit-band .t{background:rgba(255,255,255,.12);border-radius:12px;padding:10px 18px;font-size:.85rem}
+.outfit-band .t b{font-size:1.2rem;display:block}
+.outfit-band ul{list-style:none;font-size:.9rem;opacity:.95}
+.outfit-band li{padding:3px 0 3px 1.4em;position:relative}
+.outfit-band li::before{content:"◦";position:absolute;left:.3em;color:var(--gold)}
+
+/* ── Day accordion ── */
+.day{background:var(--paper);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);margin-bottom:22px;overflow:hidden;scroll-margin-top:80px}
+.day-head{display:flex;align-items:center;gap:18px;padding:22px 28px;cursor:pointer;user-select:none;transition:background .3s}
+.day-head:hover{background:#fbf8ef}
+.day-num{flex-shrink:0;width:58px;height:58px;border-radius:16px;background:var(--indigo);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--serif)}
+.day-num .d{font-size:.6rem;letter-spacing:.2em;opacity:.8}
+.day-num .n{font-size:1.5rem;font-weight:800;line-height:1}
+.day:nth-of-type(2) .day-num{background:var(--terra)}
+.day:nth-of-type(3) .day-num{background:var(--sage)}
+.day:nth-of-type(4) .day-num{background:#a0793f}
+.day:nth-of-type(5) .day-num{background:#7a5a74}
+.day-title{flex:1}
+.day-title .date{font-size:.82rem;color:var(--terra);letter-spacing:.15em;font-weight:700}
+.day-title h3{font-family:var(--serif);font-size:1.25rem;letter-spacing:.1em;color:var(--ink)}
+.day-title .summary{font-size:.83rem;color:var(--ink-soft)}
+.day-arrow{flex-shrink:0;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;transition:transform .4s;color:var(--ink-soft)}
+.day.open .day-arrow{transform:rotate(180deg)}
+.day-body{max-height:0;overflow:hidden;transition:max-height .7s cubic-bezier(.5,.05,.2,1)}
+.day.open .day-body{max-height:9000px}
+.day-inner{padding:6px 30px 30px}
+
+/* timeline */
+.tl{position:relative;margin-left:8px;padding-left:30px;border-left:2px dashed var(--line)}
+.stop{position:relative;padding:14px 0 18px}
+.stop::before{content:"";position:absolute;left:-37.5px;top:24px;width:13px;height:13px;border-radius:50%;background:var(--paper);border:3px solid var(--terra)}
+.stop.transit::before{border-color:#b8b0a0;width:9px;height:9px;left:-35.5px}
+.stop .time{display:inline-block;font-family:var(--serif);font-weight:800;color:var(--indigo);background:#eef1f6;border-radius:8px;padding:1px 12px;font-size:.92rem;letter-spacing:.05em}
+.stop h4{font-size:1.08rem;font-weight:700;margin:6px 0 2px;letter-spacing:.05em}
+.stop h4 .jp-name{font-size:.8rem;color:var(--ink-soft);font-weight:400;margin-left:8px}
+.stop p{font-size:.9rem;color:var(--ink-soft)}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}
+.bdg{font-size:.74rem;border-radius:6px;padding:2px 9px;font-weight:700;letter-spacing:.05em}
+.bdg.ok{background:#e8efe2;color:#5c7345}
+.bdg.warn{background:#f7ead9;color:#a4672f}
+.bdg.must{background:#f3e3dc;color:#a14e2e}
+.bdg.tip{background:#e8ebf3;color:#46557a}
+.gmap{display:inline-flex;align-items:center;gap:5px;font-size:.8rem;color:var(--indigo);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:3px 13px;margin:4px 6px 0 0;background:var(--paper);transition:.25s}
+.gmap:hover{background:var(--indigo);color:#fff;border-color:var(--indigo)}
+.must-box{background:#fbf4ee;border-left:4px solid var(--terra);border-radius:0 12px 12px 0;padding:12px 18px;margin:10px 0;font-size:.88rem}
+.must-box b{color:var(--terra)}
+.must-box ul{margin:4px 0 0 1.2em}
+.eat-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-top:10px}
+.eat{background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:.85rem;transition:.25s}
+.eat:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.eat b{display:block;color:var(--ink)}
+.eat span{color:var(--ink-soft);font-size:.78rem}
+.eat a{font-size:.78rem}
+
+/* photo */
+.photo{border-radius:14px;overflow:hidden;margin:12px 0;position:relative;border:1px solid var(--line);background:#ece6d6}
+.photo img{width:100%;height:240px;object-fit:cover;transition:transform .6s}
+.photo:hover img{transform:scale(1.04)}
+.photo .cap{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(40,35,25,.72));color:#fff;font-size:.78rem;padding:26px 14px 8px;letter-spacing:.1em}
+.photo.img-fail img{display:none}
+.photo.img-fail .cap{background:none;color:var(--ink-soft);position:static;padding:8px 14px}
+.photo .illus{display:none;height:170px;align-items:center;justify-content:center}
+.photo.img-fail .illus{display:flex}
+.photo-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.photo-row .photo{margin:0}
+.photo-row .photo img{height:185px}
+
+/* plan B / outfit per day */
+.planb{background:#eef1ea;border:1px dashed var(--sage);border-radius:14px;padding:14px 20px;margin-top:16px;font-size:.88rem}
+.planb b{color:#5c7345;font-family:var(--serif);letter-spacing:.1em}
+.dayfit{background:#f1eef5;border:1px dashed #9a86a8;border-radius:14px;padding:14px 20px;margin-top:12px;font-size:.88rem}
+.dayfit b{color:#7a5a74;font-family:var(--serif);letter-spacing:.1em}
+
+/* checklist */
+.check-card{background:var(--paper);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:28px 32px}
+.check-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:6px 26px}
+.ck{display:flex;align-items:center;gap:11px;padding:7px 6px;border-radius:10px;cursor:pointer;transition:.2s;font-size:.92rem}
+.ck:hover{background:var(--cream)}
+.ck input{display:none}
+.ck .box{width:21px;height:21px;border:2px solid #c5bba6;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.8rem;transition:.2s}
+.ck input:checked + .box{background:var(--sage);border-color:var(--sage)}
+.ck input:checked ~ .lb{text-decoration:line-through;color:#b3aa97}
+.ck .imp{color:var(--terra);font-size:.74rem;font-weight:700;margin-left:4px}
+
+/* resources */
+.res-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.res{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 20px;font-size:.87rem;transition:.25s;text-decoration:none;color:var(--ink);display:block}
+.res:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.res .rt{font-weight:700;display:block;margin-bottom:2px}
+.res .rs{color:var(--ink-soft);font-size:.78rem}
+.res .rk{display:inline-block;font-size:.7rem;border-radius:5px;padding:1px 7px;margin-bottom:6px;font-weight:700}
+.res .rk.blog{background:#e8efe2;color:#5c7345}
+.res .rk.yt{background:#f6e3e0;color:#b04a3c}
+.res .rk.of{background:#e8ebf3;color:#46557a}
+
+footer{text-align:center;padding:50px 0 60px;color:var(--ink-soft);font-size:.8rem;letter-spacing:.2em}
+footer .stamp{font-family:var(--serif);color:var(--terra);font-size:1rem;margin-bottom:6px}
+.note-small{font-size:.78rem;color:var(--ink-soft);margin-top:10px;text-align:center}
+@media (max-width:640px){
+  .hero .seal{display:none}
+  .day-inner{padding:4px 18px 24px}
+  .day-head{padding:18px 18px}
+  .tl{padding-left:22px}
+  .stop::before{left:-29.5px}
+  .stop.transit::before{left:-27.5px}
+}
+
+/* ── Shopping Section Styles ── */
+.shop-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  padding: 28px 32px;
+  margin-bottom: 22px;
+}
+.shop-progress-bar {
+  margin-bottom: 24px;
+}
+.shop-progress-bar .progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: .9rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+.shop-progress-bar .progress-track {
+  height: 8px;
+  background: var(--cream);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.shop-progress-bar .progress-fill {
+  height: 100%;
+  background: var(--sage);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+.shop-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 14px;
+}
+.shop-tab {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-size: .85rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--sans);
+}
+.shop-tab.active {
+  background: var(--indigo);
+  color: #fff;
+  border-color: var(--indigo);
+}
+.shop-tab:hover:not(.active) {
+  background: var(--cream);
+}
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 18px;
+}
+.shop-item {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s ease;
+  position: relative;
+}
+.shop-item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+}
+.shop-item.checked {
+  border-color: #dcd5c2;
+  background: #faf8f2;
+}
+.shop-item.checked .shop-item-photo img {
+  opacity: 0.5;
+  filter: grayscale(80%);
+}
+.shop-item.checked .shop-item-title {
+  text-decoration: line-through;
+  color: #b3aa97;
+}
+.shop-item.checked .shop-item-box {
+  background: var(--sage);
+  border-color: var(--sage);
+}
+.shop-item.checked .shop-item-box::after {
+  content: "✓";
+}
+.shop-item-photo {
+  height: 140px;
+  background: #ece6d6;
+  overflow: hidden;
+  position: relative;
+  cursor: zoom-in;
+}
+.shop-item-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+.shop-item-photo:hover img {
+  transform: scale(1.06);
+}
+.shop-item-photo-placeholder {
+  height: 140px;
+  background: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.8rem;
+  color: var(--ink-soft);
+  opacity: 0.6;
+}
+.shop-item-content {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+}
+.shop-item-check-wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+.shop-item-checkbox {
+  display: none;
+}
+.shop-item-box {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #c5bba6;
+  border-radius: 4px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: .7rem;
+  transition: .2s;
+  margin-top: 3px;
+  background: #fff;
+}
+.shop-item-title {
+  font-size: .88rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--ink);
+  word-break: break-all;
+}
+.shop-item-meta {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.shop-item-tag {
+  font-size: .72rem;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-weight: 700;
+  display: inline-block;
+}
+.shop-item-tag.loc {
+  background: #fbf4ee;
+  color: var(--terra);
+  border: 1px solid #f6d6c4;
+}
+.shop-item-tag.source {
+  background: #e8ebf3;
+  color: var(--indigo);
+  border: 1px solid #d2d9e7;
+}
+.shop-item-delete-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(255,255,255,0.9);
+  color: #b04a3c;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  transition: 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+.shop-item-delete-btn:hover {
+  background: #b04a3c;
+  color: #fff;
+  border-color: #b04a3c;
+}
+
+/* Lightbox Modal */
+.shop-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.shop-lightbox.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.shop-lightbox-content {
+  max-width: 90%;
+  max-height: 85%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.shop-lightbox img {
+  max-width: 100%;
+  max-height: 75vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+  border: 4px solid #fff;
+  background: #fff;
+}
+.shop-lightbox-title {
+  color: #fff;
+  margin-top: 15px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  font-family: var(--sans);
+}
+.shop-lightbox-close {
+  position: absolute;
+  top: -42px;
+  right: 0;
+  color: #fff;
+  font-size: 2.2rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Custom Item Form */
+.shop-add-form {
+  margin-top: 24px;
+  background: var(--cream);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid var(--line);
+}
+.shop-add-form h4 {
+  font-size: .9rem;
+  margin-bottom: 12px;
+  color: var(--indigo-deep);
+}
+.shop-add-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.shop-add-inputs input, .shop-add-inputs select {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: .85rem;
+  color: var(--ink);
+  font-family: var(--sans);
+  flex: 1;
+  min-width: 150px;
+  outline: none;
+}
+.shop-add-inputs button {
+  background: var(--terra);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 18px;
+  font-size: .85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: var(--sans);
+}
+.shop-add-inputs button:hover {
+  background: #a65839;
+}
+.shop-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+  gap: 10px;
+}
+.shop-btn-reset {
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-size: .8rem;
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--sans);
+}
+.shop-btn-reset:hover {
+  background: #f1ebd9;
+  color: var(--ink);
+}
+
+@media (max-width:640px){
+  .shop-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .shop-card {
+    padding: 18px 16px;
+  }
+  .shop-item-photo, .shop-item-photo-placeholder {
+    height: 100px;
+    font-size: 2.2rem;
+  }
+  .shop-item-title {
+    font-size: .8rem;
+  }
+  .shop-item-tag {
+    font-size: .65rem;
+    padding: 1px 4px;
+  }
+  .shop-add-inputs {
+    flex-direction: column;
+  }
+  .shop-add-inputs input, .shop-add-inputs select, .shop-add-inputs button {
+    width: 100%;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HERO ═══════════ -->
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">SLOW TRAVEL IN TOHOKU</div>
+    <h1>青森・慢旅</h1>
+    <div class="sub">ねぶたの灯、林檎の風 ── 五天四夜</div>
+    <div class="seal">青森</div>
+    <div class="dates">2026.06.18 (四) ─ 06.22 (一)</div>
+    <div class="chips">
+      <span class="chip">✈ 去程 <b>BR122</b>｜TPE 09:55 → 青森 14:20</span>
+      <span class="chip">✈ 回程 <b>BR121</b>｜青森 15:30 → TPE 18:40</span>
+      <span class="chip">👥 曾昱文 座位 25A｜曾俊雄 座位 25C</span>
+      <span class="chip">🧳 去程各1件 → 回程各2件 (共4件)</span>
+      <span class="chip">🚗 ORIX 租車 <b>6/20–6/21</b></span>
+      <span class="chip">🏨 ReLabo ×3晚＋星野青森屋 ×1晚</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ═══════════ MAP ═══════════ -->
+<section id="map">
+  <div class="sec">
+    <div class="en">Where we go</div>
+    <h2>旅の地圖</h2>
+    <div class="line"></div>
+  </div>
+  <div class="map-card">
+    <div class="map-crumb">
+      <button id="btnWorld" class="on">🌏 世界</button><span>›</span>
+      <button id="btnJapan">🗾 日本・東北</button><span>›</span>
+      <button id="btnAomori">🍎 青森縣</button>
+    </div>
+    <div class="map-stage" id="mapStage">
+      <!-- World layer -->
+      <div class="map-layer" id="worldLayer">
+        <svg id="worldSvg" viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg" aria-label="世界地圖">
+          <g id="worldG"><!-- D3 will render here --></g>
+        </svg>
+      </div>
+      <!-- Aomori layer -->
+      <div class="map-layer hide" id="aomoriLayer">
+        <svg id="aomoriSvg" viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg" aria-label="青森縣地圖">
+          <text class="sea-label" x="448" y="200">陸 奥 湾</text>
+          <text class="sea-label" x="110" y="250">日 本 海</text>
+          <text class="sea-label" x="800" y="480">太 平 洋</text>
+          <text class="sea-label" x="600" y="50" style="font-size:8px">津 軽 海 峡</text>
+          <!-- Aomori prefecture : 津輕半島＋陸奧灣＋斧頭型下北半島 -->
+          <path class="pref" d="M180,420
+            C176,390 178,360 190,335
+            C202,310 218,285 235,262
+            C252,240 264,222 272,205
+            C278,192 282,175 290,158
+            C298,140 312,118 330,96
+            C338,86 346,78 352,76
+            C358,74 362,80 364,88
+            C366,98 370,106 376,114
+            C382,122 386,134 388,148
+            C390,164 392,182 396,198
+            C400,214 408,230 420,244
+            C432,258 446,266 462,270
+            C478,274 492,270 502,258
+            C508,250 514,246 520,250
+            C526,254 530,262 538,268
+            C548,276 562,280 576,278
+            C588,276 598,268 606,254
+            C614,240 618,222 616,204
+            C614,190 608,180 596,174
+            C586,169 576,166 568,160
+            C560,154 556,144 558,132
+            C560,118 568,104 580,96
+            C592,88 606,86 622,90
+            C638,94 654,100 672,104
+            C690,108 710,110 728,116
+            C740,120 748,128 750,140
+            C752,154 748,170 744,188
+            C740,206 738,226 738,246
+            C738,268 740,290 742,312
+            C744,334 744,356 740,378
+            C737,396 732,414 730,432
+            C729,442 728,450 722,454
+            C714,459 700,458 682,456
+            C658,454 630,452 600,452
+            C566,452 530,454 494,454
+            C458,454 422,452 388,448
+            C356,445 326,440 298,436
+            C272,432 248,430 226,428
+            C206,426 188,426 180,420 Z"/>
+          <!-- 八甲田山 mark -->
+          <text x="486" y="332" style="font-size:13px">⛰</text>
+          <text x="472" y="350" style="font-size:8.5px;fill:#6b6357;font-family:var(--sans)">八甲田山</text>
+
+          <!-- pins: data-day links to day cards -->
+          <g class="pin" data-day="day1" transform="translate(450,287)">
+            <circle class="pulse" r="5"/><circle class="dot" r="5.5"/>
+            <text x="-22" y="24">青森市</text><text class="day-tag" x="-22" y="36">Day 1・2・5</text>
+          </g>
+          <g class="pin" data-day="day2" transform="translate(348,394)">
+            <circle class="dot" r="5.5"/>
+            <text x="12" y="3">弘前</text><text class="day-tag" x="12" y="15">Day 2</text>
+          </g>
+          <g class="pin" data-day="day3" transform="translate(264,234)">
+            <circle class="dot" r="5.5"/>
+            <text x="-88" y="-4">高山稻荷神社</text><text class="day-tag" x="-88" y="8">Day 3</text>
+          </g>
+          <g class="pin" data-day="day3" transform="translate(338,300)">
+            <circle class="dot" r="5.5"/>
+            <text x="12" y="-2">五所川原 ELM</text><text class="day-tag" x="12" y="10">Day 3</text>
+          </g>
+          <g class="pin" data-day="day3" transform="translate(322,348)">
+            <circle class="dot" r="5.5"/>
+            <text x="-68" y="16">鶴之舞橋</text><text class="day-tag" x="-68" y="28">Day 3</text>
+          </g>
+          <g class="pin" data-day="day3" transform="translate(706,318)">
+            <circle class="pulse" r="5"/><circle class="dot" r="5.5"/>
+            <text x="14" y="-2">星野青森屋（三澤）</text><text class="day-tag" x="14" y="10">Day 3 宿</text>
+          </g>
+          <g class="pin" data-day="day4" transform="translate(712,402)">
+            <circle class="dot" r="5.5"/>
+            <text x="14" y="6">八戶・蕪嶋神社</text><text class="day-tag" x="14" y="18">Day 4</text>
+          </g>
+          <g class="pin" data-day="day4" transform="translate(542,400)">
+            <circle class="dot" r="5.5"/>
+            <text x="-74" y="18">奧入瀨溪流</text><text class="day-tag" x="-74" y="30">Day 4</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+    <div class="map-hint" id="mapHint">點一下地圖上的<b style="color:var(--terra)">日本</b>，看看這次要去哪裡 ✈</div>
+  </div>
+</section>
+
+<!-- ═══════════ BOOKINGS ═══════════ -->
+<section id="bookings">
+  <div class="sec">
+    <div class="en">Reservations</div>
+    <h2>預訂總覽</h2>
+    <div class="line"></div>
+  </div>
+  <div class="grid3">
+    <div class="info-card">
+      <h3><span class="ic">✈️</span>長榮航空</h3>
+      <p class="big">去程 BR122｜6/18（四）</p>
+      <p>桃園 T2 09:55 → 青森機場 14:20｜座位 25A｜託運 1PC</p>
+      <p class="big" style="margin-top:8px">回程 BR121｜6/22（一）</p>
+      <p>青森機場 15:30 → 桃園 T2 18:40｜座位 25A｜託運 2PC</p>
+      <p style="margin-top:8px"><span class="tag">起飛前1hr完成報到</span></p>
+    </div>
+    <div class="info-card">
+      <h3><span class="ic">🏨</span>住宿</h3>
+      <p class="big">ReLabo -Medical Spa &amp; Stay-</p>
+      <p>6/18–6/20（2晚）＋ 6/21–6/22（1晚）<br>青森市柳川 1-1-5｜青森駅步行約 7 分<br><span class="tag">入住 15:00</span><span class="tag">退房 11:00</span></p>
+      <p class="big" style="margin-top:10px">星野集團 青森屋</p>
+      <p>6/20–6/21（1晚）｜三澤市｜和式房・含早晚自助餐<br><span class="tag">入住 15:00</span><span class="tag">退房 12:00</span></p>
+    </div>
+    <div class="info-card">
+      <h3><span class="ic">🚗</span>ORIX 租車</h3>
+      <p class="big">Toyota Raize（小型 SUV・自排）</p>
+      <p>取車：6/20（六）8:30｜新青森站旁（石江2-9-2）<br>還車：6/21（日）19:00｜同地點・取還同油</p>
+      <p style="margin-top:8px"><span class="tag">☎ +81-17-752-6543</span></p>
+      <p style="margin-top:8px;color:var(--terra);font-weight:700">⚠ 必帶：台灣駕照＋日文譯本＋護照＋本人實體信用卡＋取車單</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ OUTFIT OVERALL ═══════════ -->
+<section id="outfit">
+  <div class="sec">
+    <div class="en">What to wear</div>
+    <h2>六月青森・穿搭指南</h2>
+    <div class="line"></div>
+  </div>
+  <div class="outfit-band">
+    <h3>整趟旅程的穿著原則：洋蔥式三層</h3>
+    <p style="font-size:.9rem;opacity:.92">六月下旬的青森已入初夏，但緯度高、海風涼，日夜溫差可達 8 度，偶有梅雨鋒面掠過。</p>
+    <div class="temp">
+      <div class="t"><b>21–24°C</b>白天市區</div>
+      <div class="t"><b>13–16°C</b>清晨・夜晚</div>
+      <div class="t"><b>約 10–14°C</b>八甲田山上・奧入瀨</div>
+      <div class="t"><b>降雨</b>偶陣雨・帶摺傘</div>
+    </div>
+    <ul>
+      <li>內層：短袖棉 T 或透氣襯衫（白天走路會微微出汗）</li>
+      <li>中層：薄針織衫或長袖襯衫，咖啡店、JR 車廂冷氣偏強時穿</li>
+      <li>外層：一件防風防潑水薄外套（八甲田、海邊、夜晚必備）</li>
+      <li>鞋：好走的運動鞋或厚底休閒鞋——神社石階、溪流步道、市場地板都靠它</li>
+      <li>配件：摺疊傘、帽子、太陽眼鏡；蕪嶋神社建議帶傘「防空襲」（海鷗）</li>
+      <li>青森屋館內提供浴衣與館內拖，不用自備睡衣</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════ DAYS ═══════════ -->
+<section id="days">
+  <div class="sec">
+    <div class="en">Itinerary</div>
+    <h2>每日行程</h2>
+    <div class="line"></div>
+  </div>
+
+  <!-- ── DAY 1 ── -->
+  <article class="day open" id="day1">
+    <div class="day-head" onclick="toggleDay(this)">
+      <div class="day-num"><span class="d">DAY</span><span class="n">1</span></div>
+      <div class="day-title">
+        <div class="date">6/18 星期四</div>
+        <h3>抵達青森 ── 海風與睡魔的初見面</h3>
+        <div class="summary">機場巴士進市區・ASPAM 展望台・睡魔之家 WA RASSE・駅前晚餐</div>
+      </div>
+      <div class="day-arrow">▾</div>
+    </div>
+    <div class="day-body"><div class="day-inner">
+      <div class="photo">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Aomori%2C_Nebuta-matsuri_27.jpg/960px-Aomori%2C_Nebuta-matsuri_27.jpg" alt="青森睡魔祭燈籠" loading="lazy" onerror="this.closest('.photo').classList.add('img-fail')">
+        <div class="illus"><svg width="120" height="120" viewBox="0 0 100 100"><circle cx="50" cy="50" r="38" fill="#f3e3dc"/><text x="50" y="62" text-anchor="middle" font-size="34">🏮</text></svg></div>
+        <div class="cap">睡魔祭的大型燈籠山車，在 WA RASSE 一年四季都看得到</div>
+      </div>
+      <div class="tl">
+        <div class="stop transit">
+          <span class="time">14:20</span>
+          <h4>降落青森機場 <span class="jp-name">青森空港</span></h4>
+          <p>入境、領行李後，搭 <b>14:50 JR 機場巴士</b>往青森駅前（配合 BR122 班機的接駁班次，車程 35 分、¥980，可用交通系 IC 卡，到站 15:25）。</p>
+          <div class="badges"><span class="bdg ok">✓ 已核對 2026.3.29 版巴士時刻表</span><span class="bdg tip">巴士站在入境大廳出來步行 1 分・2 號乘車處</span></div>
+        </div>
+        <div class="stop">
+          <span class="time">15:40</span>
+          <h4>入住 ReLabo -Medical Spa &amp; Stay-</h4>
+          <p>青森駅步行約 7 分鐘，放行李、稍作休息。已備註希望高樓層雙床房。</p>
+          <a class="gmap" href="https://www.google.com/maps/search/ReLabo+Medical+Spa+%26+Stay+Aomori" target="_blank">📍 Google Map</a>
+        </div>
+        <div class="stop">
+          <span class="time">16:15</span>
+          <h4>青森縣觀光物產館 ASPAM 展望台 <span class="jp-name">アスパム</span></h4>
+          <p>正三角形地標建築，13 樓展望台 360 度看青森灣大橋與陸奧灣，傍晚光線最美。1–2 樓物產店先做伴手禮「偵察」。</p>
+          <div class="badges"><span class="bdg ok">✓ 4–10月 8:30–19:00 營業中</span><span class="bdg must">必看：展望台青森灣夕景</span></div>
+          <a class="gmap" href="https://www.google.com/maps/search/%E9%9D%92%E6%A3%AE%E7%9C%8C%E8%A6%B3%E5%85%89%E7%89%A9%E7%94%A3%E9%A4%A8%E3%82%A2%E3%82%B9%E3%83%91%E3%83%A0" target="_blank">📍 Google Map</a>
+        </div>
+        <div class="stop">
+          <span class="time">17:00</span>
+          <h4>睡魔之家 WA RASSE <span class="jp-name">ねぶたの家 ワ・ラッセ</span></h4>
+          <p>沿海濱步道散步 8 分鐘即到。館內展示歷年睡魔祭得獎大型燈籠山車，近距離感受紙燈的細節與魄力。</p>
+          <div class="badges"><span class="bdg ok">✓ 5–8月 9:00–19:00（最後入館 18:30）</span><span class="bdg must">必看：實物大睡魔燈籠＋囃子體驗</span><span class="bdg tip">門票 ¥620</span></div>
+          <a class="gmap" href="https://www.google.com/maps/search/%E3%81%AD%E3%81%B6%E3%81%9F%E3%81%AE%E5%AE%B6%E3%83%AF%E3%83%A9%E3%83%83%E3%82%BB" target="_blank">📍 Google Map</a>
+        </div>
+        <div class="stop">
+          <span class="time">18:00</span>
+          <h4>LOVINA・星巴克 青森 Lovina 店</h4>
+          <p>青森駅旁商場。星巴克 JIMOTO made 系列「<b>津輕玻璃杯</b>」只在青森縣內門市販售，第一天先收第一顆。</p>
+          <div class="badges"><span class="bdg must">必買：JIMOTO 津輕びいどろ玻璃杯</span></div>
+        </div>
+        <div class="stop">
+          <span class="time">18:30</span>
+          <h4>晚餐（自由選）</h4>
+          <div class="eat-list">
+            <div class="eat"><b>大福丸</b><span>鄉土料理・帆立貝・海鮮</span><br><a href="https://maps.app.goo.gl/XqohLvjM7X9MJoZcA" target="_blank">📍 地圖</a></div>
+            <div class="eat"><b>長尾中華拉麵</b><span>青森煮干しラーメン名店</span><br><a href="https://maps.app.goo.gl/8PpEhFQ2H5GHhcLj8" target="_blank">📍 地圖</a></div>
+            <div class="eat"><b>帆立貝料理</b><span>青森名物帆立小屋系</span><br><a href="https://maps.app.goo.gl/eBZ4PabHXPTkB5Lw5" target="_blank">📍 地圖</a></div>
+          </div>
+        </div>
+        <div class="stop transit">
+          <span class="time">20:00</span>
+          <h4>夜逛新青森 <span class="jp-name">MANDAI 万代／MEGA 唐吉訶德</span></h4>
+          <p>從青森駅搭 JR 一站到新青森（約 5 分、¥150 上下），或直接搭計程車。MANDAI 新青森店、MEGA 唐吉訶德 Gala Town 店採買零食藥妝。</p>
+          <div class="badges"><span class="bdg tip">唐吉訶德營業到深夜，不用趕</span></div>
+        </div>
+      </div>
+      <div class="dayfit"><b>今日穿著</b>｜長途飛行以舒適為主：短袖＋薄外套（機艙與傍晚海邊都涼）、好走的鞋。行李中把外套放在隨手可拿的位置。</div>
+      <div class="planb"><b>Plan B</b>｜若班機延誤或下雨：ASPAM 與 WA RASSE 擇一就好（推薦 WA RASSE，全室內又最有青森味）；晚餐改駅構內或 LOVINA 樓上食堂，行程零壓力。</div>
+    </div></div>
+  </article>
+
+  <!-- ── DAY 2 ── -->
+  <article class="day" id="day2">
+    <div class="day-head" onclick="toggleDay(this)">
+      <div class="day-num"><span class="d">DAY</span><span class="n">2</span></div>
+      <div class="day-title">
+        <div class="date">6/19 星期五</div>
+        <h3>海鮮丼的早晨・弘前洋館散策</h3>
+        <div class="summary">古川市場 DIY 海鮮丼・蘋果神社・JR 小旅行到弘前</div>
+      </div>
+      <div class="day-arrow">▾</div>
+    </div>
+    <div class="day-body"><div class="day-inner">
+      <div class="photo-row">
+        <div class="photo">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Hirosaki_Castle.JPG/960px-Hirosaki_Castle.JPG" alt="弘前城天守" loading="lazy" onerror="this.closest('.photo').classList.add('img-fail')">
+          <div class="illus"><svg width="90" height="90" viewBox="0 0 100 100"><circle cx="50" cy="50" r="38" fill="#e8ebf3"/><text x="50" y="62" text-anchor="middle" font-size="34">🏯</text></svg></div>
+          <div class="cap">弘前城天守與紅色下乘橋</div>
+        </div>
+        <div class="photo">
+          <div style="height:185px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#fbf4ee,#f3e3dc)">
+            <svg width="150" height="150" viewBox="0 0 120 120"><circle cx="60" cy="68" r="34" fill="#fff" stroke="#e3dac9" stroke-width="3"/><path d="M38,60 a26,18 0 0 1 44,0 z" fill="#f6d6c4"/><circle cx="48" cy="56" r="6" fill="#e98a6e"/><circle cx="62" cy="52" r="6" fill="#f2b04e"/><circle cx="74" cy="57" r="6" fill="#d9534f"/><rect x="50" y="20" width="4" height="26" rx="2" fill="#8a6f4d" transform="rotate(18 52 33)"/><rect x="60" y="18" width="4" height="26" rx="2" fill="#8a6f4d" transform="rotate(8 62 31)"/><text x="60" y="112" text-anchor="middle" font-size="11" fill="#a4672f" font-family="sans-serif">のっけ丼</text></svg>
+          </div>
+          <div class="cap" style="position:static;background:none;color:var(--ink-soft);padding:8px 14px">古川市場・自己的海鮮丼自己疊</div>
+        </div>
+      </div>
+      <div class="tl">
+        <div class="stop">
+          <span class="time">07:50</span>
+          <h4>古川市場 のっけ丼 <span class="jp-name">青森魚菜センター</span></h4>
+          <p>買食事券（12 枚 ¥2,200），拿著白飯在市場裡逛攤「點兵點將」，鮪魚、帆立、海膽、鮭魚卵自由疊出專屬海鮮丼。早一點去攤位最齊。</p>
+          <div class="badges"><span class="bdg ok">✓ 週五營業（公休為週二）7:00–16:00</span><span class="bdg must">必吃：現切大間鮪魚、青森帆立</span></div>
+          <a class="gmap" href="https://www.google.com/maps/search/%E9%9D%92%E6%A3%AE%E9%AD%9A%E8%8F%9C%E3%82%BB%E3%83%B3%E3%82%BF%E3%83%BC" target="_blank">📍 Google Map</a>
+        </div>
+        <div class="stop">
+          <span class="time">09:15</span>
+          <h4>廣田神社 <span class="jp-name">蘋果手水舍</span></h4>
+          <p>市場步行約 15 分。手水舍漂滿青森蘋果，超好拍；社務所求「透明蘋果玉手御守」。病厄除守護神社，幫旅程開個好頭。</p>
+          <div class="badges"><span class="bdg ok">✓ 社務所 8:30–16:30</span><span class="bdg must">必買：蘋果玉御守</span></div>
+          <a class="gmap" href="https://www.google.com/maps/search/%E5%BB%A3%E7%94%B0%E7%A5%9E%E7%A4%BE+%E9%9D%92%E6%A3%AE" target="_blank">📍 Google Map</a>
+        </div>
+        <div class="stop">
+          <span class="time">10:00</span>
+          <h4>COFFEEMAN good ☕</h4>
+          <p>回程順路（古川町，駅步行 7 分內）。自家烘焙咖啡，外帶一杯上路。<b>平日 10:00 開門</b>，所以排在神社之後剛剛好。</p>
+          <div class="badges"><span class="bdg ok">✓ 週五營業 10:00–18:00（公休二・三）</span></div>
+          <a class="gmap" href="https://www.google.com/maps/search/COFFEEMAN+good+Aomori" target="_blank">📍 Google Map</a>
+        </div>
+        <div class="stop transit">
+          <span class="time">11:00</span>
+          <h4>JR 奧羽本線 → 弘前</h4>
+          <p>普通車約 45–50 分（每小時約 1–2 班，自由入座）。沿途是津輕平原的蘋果園風景。<b>弘前市區移動一律搭計程車</b>，車站排班很多。</p>
+        </div>
+        <div class="stop">
+          <span class="time">12:00</span>
+          <h4>函太郎 迴轉壽司</h4>
+          <p>函館起家的人氣迴轉壽司，海膽、花枝、鮭魚都新鮮，平日中午也建議提早到或先抽號碼牌。</p>
+          <div class="badges"><span class="bdg ok">✓ 週五營業（一般 11:00–21:00）</span></div>
+          <a class="gmap" href="https://www.google.com/maps/search/%E5%87%BD%E5%A4%AA%E9%83%8E+%E5%BC%98%E5%89%8D" target="_blank">📍 Google Map</a>
+        </div>
+        <div class="stop">
+          <span class="time">14:00</span>
+          <h4>弘前公園周邊・自由放風</h4>
+          <p>四個點隨心情排列組合，全部都在弘前公園一帶：</p>
+          <div class="eat-list">
+            <div class="eat"><b>弘前城・弘前公園</b><span>現存 12 天守之一，護城河綠意正盛（本丸 9:00–17:00，¥320）</span></div>
+            <div class="eat"><b>星巴克 弘前公園前店</b><span>百年大正洋館改建＋津輕玻璃限定杯，必收第二顆</span></div>
+            <div class="eat"><b>大正浪漫喫茶室</b><span>藤田記念庭園內洋館咖啡，蘋果派食べ比べ（9:30–16:30・L.O.16:00）</span></div>
+            <div class="eat"><b>Montbell 弘前店</b><span>戶外品牌補貨，日本價差優勢</span></div>
+            <div class="eat"><b>Kojima × Bic Camera 弘前店</b><span>複合型家電量販，3C、相機、家電一站購足（10:00–21:00）</span><br><a class="gmap" href="https://www.google.com/maps/search/Kojima+Bic+Camera+Hirosaki" target="_blank">📍 地圖</a></div>
+          </div>
+          <div class="badges"><span class="bdg must">必吃：大正浪漫喫茶室蘋果派</span><span class="bdg tip">喫茶室 L.O. 16:00，想吃要 15:30 前入店</span></div>
+          <a class="gmap" href="https://www.google.com/maps/search/%E5%BC%98%E5%89%8D%E5%85%AC%E5%9C%92" target="_blank">📍 弘前公園</a>
+          <a class="gmap" href="https://www.google.com/maps/search/%E8%97%A4%E7%94%B0%E8%A8%98%E5%BF%B5%E5%BA%AD%E5%9C%92" target="_blank">📍 藤田記念庭園</a>
+        </div>
+        <div class="stop transit">
+          <span class="time">17:30</span>
+          <h4>JR 回青森市區</h4>
+          <p>抵達後直接接晚餐。</p>
+        </div>
+        <div class="stop">
+          <span class="time">18:30</span>
+          <h4>晚餐（自由選・七選一）</h4>
+          <div class="eat-list">
+            <div class="eat"><b>大福丸</b><span>鄉土料理居酒屋</span><br><a href="https://maps.app.goo.gl/XqohLvjM7X9MJoZcA" target="_blank">📍 地圖</a></div>
+            <div class="eat"><b>長尾中華拉麵</b><span>煮干し系</span><br><a href="https://maps.app.goo.gl/8PpEhFQ2H5GHhcLj8" target="_blank">📍 地圖</a></div>
+            <div class="eat"><b>帆立貝料理</b><span>帆立釣り體驗系</span><br><a href="https://maps.app.goo.gl/eBZ4PabHXPTkB5Lw5" target="_blank">📍 地圖</a></div>
+            <div class="eat"><b>味の札幌 浅利</b><span>味噌咖哩牛奶拉麵（青森靈魂B級美食）</span><br><a href="https://maps.app.goo.gl/wXDN8bbYUiydVHuS8" target="_blank">📍 地圖</a></div>
+            <div class="eat"><b>青森 帆立家</b><span>帆立貝專門</span><br><a href="https://maps.app.goo.gl/sjpHtcSod8vSARbu6" target="_blank">📍 地圖</a></div>
+            <div class="eat"><b>True 日式咖哩</b><span>洋食咖哩</span><br><a href="https://maps.app.goo.gl/RkGX2TbZ2zGShj9u6" target="_blank">📍 地圖</a></div>
+            <div class="eat"><b>Tonkatsu Shigesaku（重作）</b><span>青森在地老字號豬排店，厚切里脊炸得酥香，份量扎實，是當地人口耳相傳的好選擇</span><br><a class="gmap" href="https://www.google.com/maps/search/Tonkatsu+Shigesaku+Aomori" target="_blank">📍 地圖</a></div>
+          </div>
+        </div>
+      </div>
+      <div class="dayfit"><b>今日穿著</b>｜走路量最大的一天（市場＋神社＋弘前公園）：透氣上衣＋舒服的鞋是重點，帶薄外套防 JR 冷氣。想拍弘前洋館，米白、大地色系衣服很出片。</div>
+      <div class="planb"><b>Plan B</b>｜雨天版：弘前改成「室內洋館巡禮」——舊弘前市立圖書館、藤田記念庭園洋館下午茶為主；或干脆不去弘前，改逛<b>青森縣立美術館</b>（奈良美智「あおもり犬」，週五開到 17:00）＋三內丸山遺跡，兩處相鄰、計程車 15 分可達。</div>
+    </div></div>
+  </article>
+
+  <!-- ── DAY 3 ── -->
+  <article class="day" id="day3">
+    <div class="day-head" onclick="toggleDay(this)">
+      <div class="day-num"><span class="d">DAY</span><span class="n">3</span></div>
+      <div class="day-title">
+        <div class="date">6/20 星期六</div>
+        <h3>西線自駕 ── 千本鳥居與木造太鼓橋</h3>
+        <div class="summary">ORIX 取車・高山稻荷神社・五所川原 ELM・鶴之舞橋・宿 星野青森屋</div>
+      </div>
+      <div class="day-arrow">▾</div>
+    </div>
+    <div class="day-body"><div class="day-inner">
+      <div class="photo-row">
+        <div class="photo">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Takayama_Inari_Shrine.JPG/960px-Takayama_Inari_Shrine.JPG" alt="高山稻荷神社千本鳥居" loading="lazy" onerror="this.closest('.photo').classList.add('img-fail')">
+          <div class="illus"><svg width="90" height="90" viewBox="0 0 100 100"><circle cx="50" cy="50" r="38" fill="#f3e3dc"/><text x="50" y="62" text-anchor="middle" font-size="34">⛩️</text></svg></div>
+          <div class="cap">高山稻荷神社・如龍蜿蜒的千本鳥居</div>
+        </div>
+        <div class="photo">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Tsuruno-maihashi_in_April_2023.jpg/960px-Tsuruno-maihashi_in_April_2023.jpg" alt="鶴之舞橋" loading="lazy" onerror="this.closest('.photo').classList.add('img-fail')">
+          <div class="illus"><svg width="90" height="90" viewBox="0 0 100 100"><circle cx="50" cy="50" r="38" fill="#e8efe2"/><text x="50" y="62" text-anchor="middle" font-size="34">🌉</text></svg></div>
+          <div class="cap">鶴之舞橋・日本最長木造三連太鼓橋</div>
+        </div>
+      </div>
+      <div class="tl">
+        <div class="stop transit">
+          <span class="time">08:00</span>
+          <h4>帶上全部行李，移動到新青森站</h4>
+          <p>搭 JR 一站（5 分）或計程車（約 10 分、¥1,500 內）。今晚住青森屋，行李全部上車。</p>
+        </div>
+        <div class="stop">
+          <span class="time">08:30</span>
+          <h4>ORIX 新青森站前店・取車 <span class="jp-name">Toyota Raize</span></h4>
+          <p>店面在車站出口步行 2 分（青森市石江2-9-2）。出示：<b>台灣駕照＋日文譯本＋護照＋取車單＋本人實體信用卡</b>。確認車身刮痕拍照存證、導航設定好再出發。</p>
+          <div class="badges"><span class="bdg warn">⚠ 日文譯本：JAF 或台灣監理站申請，缺一不可租車</span><span class="bdg tip">確認碼：請見實體取車單</span></div>
+          <a class="gmap" href="https://www.google.com/maps/search/%E3%82%AA%E3%83%AA%E3%83%83%E3%82%AF%E3%82%B9%E3%83%AC%E3%83%B3%E3%82%BF%E3%82%AB%E3%83%BC%E6%96%B0%E9%9D%92%E6%A3%AE%E9%A7%85%E5%89%8D%E5%BA%97" target="_blank">📍 Google Map</a>
+        </div>
+        <div class="stop">
+          <span class="time">09:40</span>
+          <h4>高山稻荷神社 <span class="jp-name">千本鳥居</span></h4>
+          <p>車程約 70 分。一早抵達人最少，蜿蜒入海色稻荷山丘的朱紅鳥居隨便拍都是大片。庭園水池倒影視角在高台上，記得走到最上面回頭看。</p>
+          <div class="badges"><span class="bdg ok">✓ 9:00–17:00・年中無休</span><span class="bdg must">必拍：高台回望千本鳥居 S 形曲線</span><span class="bdg tip">參道有段階梯，穿好走的鞋</span></div>
+          <a class="gmap" href="https://www.google.com/maps/search/%E9%AB%98%E5%B1%B1%E7%A8%B2%E8%8D%B7%E7%A5%9E%E7%A4%BE" target="_blank">📍 Google Map</a>
+        </div>
+        <div class="stop">
+          <span class="time">11:15</span>
+          <h4>五所川原 ELM 購物中心</h4>
+          <p>車程約 30 分。Freak's Store、UNIQLO、星巴克青森 ELM 店（津輕玻璃杯補貨點）。午餐就在館內「津輕ラーメン街道」解決。</p>
+          <div class="badges"><span class="bdg ok">✓ 專門店 10:00–20:00／拉麵街道 11:00–20:30</span></div>
+          <a class="gmap" href="https://www.google.com/maps/search/%E3%82%A8%E3%83%AB%E3%83%A0%E3%81%AE%E8%A1%97%E3%82%B7%E3%83%A7%E3%83%83%E3%83%94%E3%83%B3%E3%82%B0%E3%82%BB%E3%83%B3%E3%82%BF%E3%83%BC" target="_blank">📍 Google Map</a>
+        </div>
+        <div class="stop">
+          <span class="time">13:40</span>
+          <h4>鶴之舞橋 <span class="jp-name">鶴の舞橋</span></h4>
+          <p>車程約 20 分。全長 300 公尺的青森檜木三連太鼓橋，倒映在津輕富士見湖上，背景就是岩木山。<b>2026 年 4 月 17 日大改修完工、已全面開放通行</b>——你們去的時候是「全新狀態」的舞橋！</p>
+          <div class="badges"><span class="bdg ok">✓ 整修已完工（2026.4.17 開通）・自由參觀</span><span class="bdg must">必拍：橋＋岩木山同框（湖畔左側角度）</span></div>
+          <a class="gmap" href="https://www.google.com/maps/search/%E9%B6%B4%E3%81%AE%E8%88%9E%E6%A9%8B" target="_blank">📍 Google Map</a>
+        </div>
+        <div class="stop transit">
+          <span class="time">14:20</span>
+          <h4>橫切津輕平原 → 東海岸</h4>
+          <p>浪岡 IC 上東北自動車道 → 青森 JCT → 青森自動車道／上北道方向，往三澤約 1.5 小時。途中想休息可停「高速道路休息站」買蘋果汁。</p>
+        </div>
+        <div class="stop">
+          <span class="time">15:50</span>
+          <h4>星野集團 青森屋・入住 🎐</h4>
+          <p>15:00 開放入住，到的時間剛剛好。晚餐是「のれそれ食堂」和洋自助（已含），吃完去<b>元湯・浮湯溫泉</b>泡湯，再看夜間睡魔表演「みちのく祭りや」，園區的祭典氣氛拉滿。</p>
+          <div class="badges"><span class="bdg must">必體驗：浮湯（漂在池塘上的露天風呂）</span><span class="bdg must">必看：夜間睡魔祭表演</span><span class="bdg tip">公園散步道傍晚很舒服，有馬車</span></div>
+          <a class="gmap" href="https://www.google.com/maps/search/%E6%98%9F%E9%87%8E%E3%83%AA%E3%82%BE%E3%83%BC%E3%83%88%E9%9D%92%E6%A3%AE%E5%B1%8B" target="_blank">📍 Google Map</a>
+        </div>
+      </div>
+      <div class="dayfit"><b>今日穿著</b>｜自駕日：開車舒適優先，彈性褲裝＋好穿脫的外套。高山稻荷神社有階梯與海風，外套帶著；進青森屋後換浴衣放鬆。</div>
+      <div class="planb"><b>Plan B</b>｜下大雨：高山稻荷雨天其實別有氛圍（人更少），但若想全程室內，改去<b>立佞武多之館</b>（五所川原，9:00–17:00）看 23 公尺高的立佞武多山車，再去 ELM，時間更寬鬆。</div>
+    </div></div>
+  </article>
+
+  <!-- ── DAY 4 ── -->
+  <article class="day" id="day4">
+    <div class="day-head" onclick="toggleDay(this)">
+      <div class="day-num"><span class="d">DAY</span><span class="n">4</span></div>
+      <div class="day-title">
+        <div class="date">6/21 星期日</div>
+        <h3>東線兜風 ── 海鷗、市場與溪流新綠</h3>
+        <div class="summary">AEON 下田・八食中心炭烤・蕪嶋神社・奧入瀨溪流・19:00 前還車</div>
+      </div>
+      <div class="day-arrow">▾</div>
+    </div>
+    <div class="day-body"><div class="day-inner">
+      <div class="photo-row">
+        <div class="photo">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Kabushima_Shrine_2024-09-14.jpg/960px-Kabushima_Shrine_2024-09-14.jpg" alt="蕪嶋神社" loading="lazy" onerror="this.closest('.photo').classList.add('img-fail')">
+          <div class="illus"><svg width="90" height="90" viewBox="0 0 100 100"><circle cx="50" cy="50" r="38" fill="#e8ebf3"/><text x="50" y="62" text-anchor="middle" font-size="34">🕊️</text></svg></div>
+          <div class="cap">蕪嶋神社・黑尾鷗的繁殖聖地</div>
+        </div>
+        <div class="photo">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Oirase_Stream%2C_Towada-Hachimantai_National_Park%2C_Japan.jpg/960px-Oirase_Stream%2C_Towada-Hachimantai_National_Park%2C_Japan.jpg" alt="奧入瀨溪流新綠" loading="lazy" onerror="this.closest('.photo').classList.add('img-fail')">
+          <div class="illus"><svg width="90" height="90" viewBox="0 0 100 100"><circle cx="50" cy="50" r="38" fill="#e8efe2"/><text x="50" y="62" text-anchor="middle" font-size="34">🌿</text></svg></div>
+          <div class="cap">奧入瀨溪流・六月正是新綠隧道的尾聲、最濃的綠</div>
+        </div>
+      </div>
+      <div class="tl">
+        <div class="stop">
+          <span class="time">07:30</span>
+          <h4>青森屋的早晨</h4>
+          <p>早起泡一次晨湯，再吃のれそれ食堂自助早餐（已含）。古民家風食堂的烤帆立味噌、蘋果咖哩都值得一試。</p>
+        </div>
+        <div class="stop">
+          <span class="time">10:00</span>
+          <h4>退房出發</h4>
+          <p>青森屋退房時間 12:00，但今天行程豐富，10 點出發剛好。</p>
+        </div>
+        <div class="stop">
+          <span class="time">10:15</span>
+          <h4>AEON MALL 下田 <span class="jp-name">niko and ... ／ C-pla</span></h4>
+          <p>車程約 15 分。niko and... 雜貨服飾、C-pla 扭蛋館，輕鬆逛 1.5 小時。</p>
+          <div class="badges"><span class="bdg ok">✓ 週日營業 10:00–21:00</span></div>
+          <a class="gmap" href="https://www.google.com/maps/search/%E3%82%A4%E3%82%AA%E3%83%B3%E3%83%A2%E3%83%BC%E3%83%AB%E4%B8%8B%E7%94%B0" target="_blank">📍 Google Map</a>
+        </div>
+        <div class="stop">
+          <span class="time">12:00</span>
+          <h4>八食中心・七厘村炭火燒烤 <span class="jp-name">八戸 八食センター</span></h4>
+          <p>車程約 30 分。市場買新鮮海產（大蝦、帆立、花枝、海膽），進「七厘村」租炭爐現買現烤，2 小時 ¥500/人，這餐是今天的主角，慢慢烤慢慢吃。</p>
+          <div class="badges"><span class="bdg ok">✓ 週日營業（市場 9:00–18:00／七厘村受理 9:00–17:00・公休週三）</span><span class="bdg must">必吃：現烤大帆立＋海膽</span></div>
+          <a class="gmap" href="https://www.google.com/maps/search/%E5%85%AB%E9%A3%9F%E3%82%BB%E3%83%B3%E3%82%BF%E3%83%BC" target="_blank">📍 Google Map</a>
+        </div>
+        <div class="stop">
+          <span class="time">14:00</span>
+          <h4>蕪嶋神社 <span class="jp-name">かぶしま・黑尾鷗繁殖地</span></h4>
+          <p>車程約 20 分。六月正值黑尾鷗（うみねこ）育雛季，三萬隻海鷗繞著紅色神社飛，超震撼。入口可借「會運傘」——被鳥糞擊中視為「開運」，社務所還會發開運證明書（笑）。</p>
+          <div class="badges"><span class="bdg ok">✓ 參拜 9:00–16:00</span><span class="bdg must">必體驗：撐傘穿越海鷗風暴</span><span class="bdg warn">⚠ 鳥很多是真的，外套帽子戴好</span></div>
+          <a class="gmap" href="https://www.google.com/maps/search/%E8%95%AA%E5%B6%8B%E7%A5%9E%E7%A4%BE" target="_blank">📍 Google Map</a>
+        </div>
+        <div class="stop">
+          <span class="time">15:00</span>
+          <h4>奧入瀨溪流・新綠兜風 <span class="jp-name">石ヶ戸～銚子大滝</span></h4>
+          <p>車程約 1 小時 15 分進山。沿國道 102 號開進溪流綠色隧道，在「石ヶ戸」停車場停車，沿溪步道散步 30–40 分鐘（想看瀑布就開到銚子大滝）。六月下旬綠意最濃、負離子滿點。</p>
+          <div class="badges"><span class="bdg must">必走：石ヶ戸→阿修羅之流 步道段</span><span class="bdg tip">山區比市區低 5–8 度，外套穿上</span></div>
+          <a class="gmap" href="https://www.google.com/maps/search/%E5%A5%A5%E5%85%A5%E7%80%AC%E6%B8%93%E6%B5%81+%E7%9F%B3%E3%83%B6%E6%88%B8" target="_blank">📍 Google Map</a>
+          <div class="must-box" style="margin-top:10px"><b>（Option）八甲田山纜車</b>
+            <p style="font-size:.85rem">回程順路（往新青森方向國道 103 號）。年度檢修已於 6/13 結束，營運 9:00–16:20（上行末班 15:40 前後）。<b>時間上會偏緊</b>：想搭的話，蕪嶋神社結束就直接出發、奧入瀨縮短為車上賞景。天氣不穩就果斷放掉，把時間留給溪流散步。</p>
+          </div>
+        </div>
+        <div class="stop transit">
+          <span class="time">17:30</span>
+          <h4>山路下行 → 新青森・加油還車</h4>
+          <p>國道 103 號經萱野高原下山約 1 小時，在新青森站周邊加油站加滿油（取還同油），<b>19:00 前</b>還車給 ORIX。</p>
+          <div class="badges"><span class="bdg warn">⚠ 山路傍晚可能起霧，開慢一點、保留緩衝</span></div>
+        </div>
+        <div class="stop">
+          <span class="time">19:15</span>
+          <h4>JR 回青森・再宿 ReLabo</h4>
+          <p>新青森搭一站回青森駅，步行入住 ReLabo（第二次來已經是熟門熟路）。</p>
+        </div>
+        <div class="stop">
+          <span class="time">19:40</span>
+          <h4>晚餐（自由選）</h4>
+          <p>名單同 Day 2 六選——還沒吃到的「味噌咖哩牛奶拉麵」今晚是最後機會！</p>
+        </div>
+      </div>
+      <div class="dayfit"><b>今日穿著</b>｜溫差最大的一天：市區 22 度、奧入瀨溪畔可能只有 14 度。短袖＋防風外套缺一不可，走溪流步道務必運動鞋；蕪嶋神社……穿「不怕被鳥祝福」的外套。</div>
+      <div class="planb"><b>Plan B</b>｜天氣差或想更悠閒：放掉奧入瀨與八甲田，改在八戶市區「みろく横丁」屋台街喝一杯、逛八戶港，再提早回青森泡 ReLabo 的 SPA——這天的還車時間就完全沒壓力。</div>
+      <div class="planb" style="margin-top:10px;background:#f0ebe8;border-color:var(--terra)"><b style="color:var(--terra)">Plan C</b>｜想泡溫泉的懶人版：蕪嶋神社結束後不走奧入瀨，改往八甲田山腰的 <b>酸ヶ湯温泉（すかゆ）</b>。
+        <br><br>
+        <b>時間安排（接上正版 Day 4 上午）：</b><br>
+        <b>13:30</b> 蕪嶋神社結束，往八甲田方向出發（國道 45 號→340 號→奧入瀨方向→國道 103 號上山，約 1h30m）<br>
+        <b>15:00–16:30</b> 酸ヶ湯温泉・<b>ヒバ千人風呂</b>——日本最大混浴大浴場，千年歷史的青森檜葉木造大澡堂，硫磺酸性泉，泡完皮膚超光滑。也有分開男女的「玉の湯」可選。入浴券 ¥600 / 人，毛巾現場購買。<br>
+        <b>17:00</b> 沿國道 103 號下山回青森（約 40 分），晚上同正版行程還車。
+        <br><br>
+        <span style="font-size:.82rem;color:var(--ink-soft)">📍 <a class="gmap" href="https://www.google.com/maps/search/%E9%85%B8%E3%83%B6%E6%B9%AF%E6%B8%A9%E6%B3%89" target="_blank" style="font-size:.82rem">酸ヶ湯温泉 Google Map</a>｜營業 7:00–18:00（千人風呂・入浴最終受理 17:30）｜⚠ 泳衣不可入浴，準備大浴巾遮體即可</span>
+      </div>
+    </div></div>
+  </article>
+
+  <!-- ── DAY 5 ── -->
+  <article class="day" id="day5">
+    <div class="day-head" onclick="toggleDay(this)">
+      <div class="day-num"><span class="d">DAY</span><span class="n">5</span></div>
+      <div class="day-title">
+        <div class="date">6/22 星期一</div>
+        <h3>最後的青森 ── 蘋果香伴手禮與返航</h3>
+        <div class="summary">A-Factory 採買・12:30 機場巴士・BR121 返台</div>
+      </div>
+      <div class="day-arrow">▾</div>
+    </div>
+    <div class="day-body"><div class="day-inner">
+      <div class="photo">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/A-Factory_20240324.jpg/960px-A-Factory_20240324.jpg" alt="A-FACTORY" loading="lazy" onerror="this.closest('.photo').classList.add('img-fail')">
+        <div class="illus"><svg width="120" height="120" viewBox="0 0 100 100"><circle cx="50" cy="50" r="38" fill="#fbf4ee"/><text x="50" y="62" text-anchor="middle" font-size="34">🍎</text></svg></div>
+        <div class="cap">A-FACTORY・青森灣旁的蘋果製造所</div>
+      </div>
+      <div class="tl">
+        <div class="stop">
+          <span class="time">09:30</span>
+          <h4>ReLabo 退房・行李寄櫃台</h4>
+          <p>退房時間 11:00 前，先辦退房、行李寄放櫃台再出門（比原計畫提早一點，因為 A-Factory <b>10:00 才開門</b>）。</p>
+          <div class="badges"><span class="bdg warn">⚠ 微調：A-Factory 商店 10:00 開店，9:30 先退房剛好</span></div>
+        </div>
+        <div class="stop">
+          <span class="time">10:00</span>
+          <h4>A-FACTORY・伴手禮總決算 🍎</h4>
+          <p>青森駅海側的蘋果主題市集。開店即進場，慢慢買不用搶。</p>
+          <div class="must-box"><b>必買清單</b>
+            <ul>
+              <li>青森蘋果氣泡酒 Cidre（館內自家工房釀造，買瓶裝帶回）</li>
+              <li>氣泡酒吧台「試飲套組」——買之前先喝喝看</li>
+              <li>蘋果汁「希望の雫」、蘋果派、りんごおいらん菓子</li>
+              <li>帆立、海鮮加工品＆青森限定雜貨</li>
+            </ul>
+          </div>
+          <div class="badges"><span class="bdg ok">✓ 商店 10:00–19:00</span><span class="bdg tip">酒類記得放託運（回程有 2PC 額度）</span></div>
+          <a class="gmap" href="https://www.google.com/maps/search/A-FACTORY+%E9%9D%92%E6%A3%AE" target="_blank">📍 Google Map</a>
+        </div>
+        <div class="stop transit">
+          <span class="time">11:30</span>
+          <h4>回飯店取行李 → 青森駅前 ⑪ 號乘車處</h4>
+          <p>步行回 ReLabo 拿行李（7 分），慢慢走到駅前巴士站，時間非常充裕，可在駅構內買個便當或飲料。</p>
+        </div>
+        <div class="stop transit">
+          <span class="time">12:30</span>
+          <h4>JR 機場巴士 → 青森機場</h4>
+          <p>12:30 發車、13:05 抵達機場（¥980）。距離 15:30 起飛還有 2 小時 25 分，報到、退稅、最後採買都從容。</p>
+          <div class="badges"><span class="bdg ok">✓ 已核對時刻表：12:30 是配合 BR121 的最佳班次</span><span class="bdg warn">⚠ 下一班 13:35 到機場 14:10，對國際線太趕，別搭</span></div>
+        </div>
+        <div class="stop">
+          <span class="time">15:30</span>
+          <h4>BR121 起飛 ✈ 18:40 抵達桃園</h4>
+          <p>帶著一行李箱的蘋果與回憶，おつかれさま！</p>
+        </div>
+      </div>
+      <div class="dayfit"><b>今日穿著</b>｜移動日：好活動的舒適穿搭，外套隨身（機艙冷）。行李秤一下重量，伴手禮分散放。</div>
+      <div class="planb"><b>Plan B</b>｜若想多走一點：A-Factory 旁就是青森灣海濱步道與「ねぶたの家」紅色建築群，買完逛 20 分鐘海邊再回飯店；或加碼站內「青森駅ビル LOVINA」補最後的零食。</div>
+    </div></div>
+  </article>
+
+</section>
+
+<!-- ═══════════ SHOPPING LIST ═══════════ -->
+<section id="shopping">
+  <div class="sec">
+    <div class="en">Shopping list</div>
+    <h2>購物清單</h2>
+    <div class="line"></div>
+  </div>
+  <div class="shop-card">
+    <!-- Progress Bar -->
+    <div class="shop-progress-bar">
+      <div class="progress-info">
+        <span>已購買進度</span>
+        <span class="progress-pct" id="shopProgressPct">0% (0 / 0)</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="shopProgressFill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="shop-tabs" id="shopTabs">
+      <button class="shop-tab active" data-cat="all">全部 (0)</button>
+      <button class="shop-tab" data-cat="toy">🎮 扭蛋/公仔 (0)</button>
+      <button class="shop-tab" data-cat="medicine">💊 藥妝保健 (0)</button>
+      <button class="shop-tab" data-cat="apparel">👜 服飾配件 (0)</button>
+      <button class="shop-tab" data-cat="food">🍎 食品伴手禮 (0)</button>
+      <button class="shop-tab" data-cat="misc">🛒 日用雜貨 (0)</button>
+    </div>
+
+    <!-- Grid Container -->
+    <div class="shop-grid" id="shopGrid">
+      <!-- Items will be rendered here dynamically via JS -->
+    </div>
+
+    <!-- Action bar (Reset etc.) -->
+    <div class="shop-actions">
+      <button class="shop-btn-reset" id="shopBtnReset">清空所有勾選狀態</button>
+    </div>
+
+    <!-- Add Custom Item Form -->
+    <div class="shop-add-form">
+      <h4>➕ 新增自訂購物項目</h4>
+      <form id="shopAddForm" onsubmit="event.preventDefault(); addCustomItem();">
+        <div class="shop-add-inputs">
+          <input type="text" id="shopInputName" placeholder="項目名稱 (例如: 薯條三兄弟)" required>
+          <select id="shopSelectCat">
+            <option value="toy">🎮 扭蛋/公仔</option>
+            <option value="medicine">💊 藥妝保健</option>
+            <option value="apparel">👜 服飾配件</option>
+            <option value="food" selected>🍎 食品伴手禮</option>
+            <option value="misc">🛒 日用雜貨</option>
+          </select>
+          <input type="text" id="shopInputLoc" placeholder="建議購買地點 (選填，例如: A-Factory)">
+          <button type="submit">加入清單</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox Modal -->
+<div class="shop-lightbox" id="shopLightbox" onclick="closeLightbox()">
+  <div class="shop-lightbox-content" onclick="event.stopPropagation()">
+    <button class="shop-lightbox-close" onclick="closeLightbox()">&times;</button>
+    <img id="shopLightboxImg" src="" alt="放大圖">
+    <div class="shop-lightbox-title" id="shopLightboxTitle">商品名稱</div>
+  </div>
+</div>
+
+<!-- ═══════════ CHECKLIST ═══════════ -->
+<section id="checklist">
+  <div class="sec">
+    <div class="en">Packing list</div>
+    <h2>行前清單</h2>
+    <div class="line"></div>
+  </div>
+  <div class="check-card">
+    <div class="check-grid" id="ckGrid">
+      <label class="ck"><input type="checkbox" data-k="passport"><span class="box">✓</span><span class="lb">護照（效期 6 個月以上）</span><span class="imp">必備</span></label>
+      <label class="ck"><input type="checkbox" data-k="license"><span class="box">✓</span><span class="lb">台灣駕照正本</span><span class="imp">租車必備</span></label>
+      <label class="ck"><input type="checkbox" data-k="jaf"><span class="box">✓</span><span class="lb">駕照日文譯本（監理站／JAF）</span><span class="imp">租車必備</span></label>
+      <label class="ck"><input type="checkbox" data-k="card"><span class="box">✓</span><span class="lb">本人名義實體信用卡（押金用）</span><span class="imp">租車必備</span></label>
+      <label class="ck"><input type="checkbox" data-k="voucher"><span class="box">✓</span><span class="lb">取車單（紙本或電子）＋回程機票證明</span><span class="imp">租車必備</span></label>
+      <label class="ck"><input type="checkbox" data-k="hotel"><span class="box">✓</span><span class="lb">三份住宿確認單（ReLabo×2、青森屋）</span></label>
+      <label class="ck"><input type="checkbox" data-k="sim"><span class="box">✓</span><span class="lb">eSIM／網路（導航靠它）</span></label>
+      <label class="ck"><input type="checkbox" data-k="ic"><span class="box">✓</span><span class="lb">交通 IC 卡（Suica／iPhone 內建）</span></label>
+      <label class="ck"><input type="checkbox" data-k="yen"><span class="box">✓</span><span class="lb">日幣現金（市場、神社御守多收現金）</span></label>
+      <label class="ck"><input type="checkbox" data-k="jacket"><span class="box">✓</span><span class="lb">防風薄外套＋薄針織</span></label>
+      <label class="ck"><input type="checkbox" data-k="umbrella"><span class="box">✓</span><span class="lb">摺疊傘（梅雨前緣＋海鷗對策）</span></label>
+      <label class="ck"><input type="checkbox" data-k="shoes"><span class="box">✓</span><span class="lb">好走的運動鞋</span></label>
+      <label class="ck"><input type="checkbox" data-k="med"><span class="box">✓</span><span class="lb">常備藥、暈車藥（山路）</span></label>
+      <label class="ck"><input type="checkbox" data-k="bag"><span class="box">✓</span><span class="lb">摺疊購物袋（伴手禮會爆買）</span></label>
+      <label class="ck"><input type="checkbox" data-k="charger"><span class="box">✓</span><span class="lb">行動電源＋車充線</span></label>
+      <label class="ck"><input type="checkbox" data-k="onsen"><span class="box">✓</span><span class="lb">小毛巾（溫泉用）</span></label>
+    </div>
+    <p class="note-small">✦ 勾選狀態會自動記住（存在這台電腦的瀏覽器裡）</p>
+  </div>
+</section>
+
+<!-- ═══════════ RESOURCES ═══════════ -->
+<section id="resources">
+  <div class="sec">
+    <div class="en">Read &amp; Watch</div>
+    <h2>部落客＆影音補給</h2>
+    <div class="line"></div>
+  </div>
+  <div class="res-grid">
+    <a class="res" href="https://journey.tw/nebuta/" target="_blank"><span class="rk blog">BLOG</span><span class="rt">青森睡魔之家 WA RASSE 完整攻略</span><span class="rs">許傑・旅行圖中｜交通、門票、參觀重點</span></a>
+    <a class="res" href="https://mimigo.tw/warasse/" target="_blank"><span class="rk blog">BLOG</span><span class="rt">WA RASSE 必拍睡魔祭燈籠＆文化體驗</span><span class="rs">Mimi韓の旅遊指南</span></a>
+    <a class="res" href="https://journey.tw/aomori-aspam/" target="_blank"><span class="rk blog">BLOG</span><span class="rt">ASPAM 展望台・青森夜景開箱</span><span class="rs">許傑・旅行圖中</span></a>
+    <a class="res" href="https://www.bring-you.info/zh-tw/aomori-aspam" target="_blank"><span class="rk blog">BLOG</span><span class="rt">青森縣觀光物產館＋紀念品攻略</span><span class="rs">BringYou</span></a>
+    <a class="res" href="https://www.youtube.com/watch?v=6utxP_JroW4" target="_blank"><span class="rk yt">YOUTUBE</span><span class="rt">古川市場 のっけ丼 實況</span><span class="rs">市場逛法、食事券使用方式一看就懂</span></a>
+    <a class="res" href="https://nokkedon.jp/about/" target="_blank"><span class="rk of">官方</span><span class="rt">元祖青森のっけ丼 官方資訊</span><span class="rs">最新券價與營業日曆</span></a>
+    <a class="res" href="https://www.nippon.com/ja/guide-to-japan/gu900223/" target="_blank"><span class="rk blog">特輯</span><span class="rt">高山稻荷神社・如龍鳥居絕景</span><span class="rs">nippon.com 深度報導</span></a>
+    <a class="res" href="https://travel.rakuten.co.jp/mytrip/howto/tsugaru-guide" target="_blank"><span class="rk blog">BLOG</span><span class="rt">津輕一日遊：高山稻荷＋美食</span><span class="rs">樂天旅遊特輯</span></a>
+    <a class="res" href="https://www.medetai-tsuruta.jp/20711.html" target="_blank"><span class="rk of">官方</span><span class="rt">鶴之舞橋 開通公告（2026.4.17）</span><span class="rs">メデタイ・ツルタ｜改修完工最新狀態</span></a>
+    <a class="res" href="https://lifeisdescavary.com/oirasekeiryuu-hiking/" target="_blank"><span class="rk blog">BLOG</span><span class="rt">奧入瀨溪流健行・穿著與路線</span><span class="rs">步道分段、季節與服裝建議</span></a>
+    <a class="res" href="https://hakkoda-ropeway.jp/" target="_blank"><span class="rk of">官方</span><span class="rt">八甲田纜車 運行資訊</span><span class="rs">出發前再確認當日風況停駛公告</span></a>
+    <a class="res" href="https://www.849net.com/calendar/" target="_blank"><span class="rk of">官方</span><span class="rt">八食中心 營業日曆</span><span class="rs">出發前掃一眼最保險</span></a>
+  </div>
+</section>
+
+<footer>
+  <div class="stamp">良い旅を ─ 一路順風</div>
+  TSENG YU WEN ✕ AOMORI 2026 ｜ 營業時間查證日 2026.06.11
+</footer>
+
+</div>
+<script>
+/* ── Day accordion ── */
+function toggleDay(head){
+  head.parentElement.classList.toggle('open');
+}
+
+/* ── Map interaction ── */
+const worldLayer = document.getElementById('worldLayer');
+const aomoriLayer = document.getElementById('aomoriLayer');
+const stage = document.getElementById('mapStage');
+const hint = document.getElementById('mapHint');
+const btnWorld = document.getElementById('btnWorld');
+const btnJapan = document.getElementById('btnJapan');
+const btnAomori = document.getElementById('btnAomori');
+
+function setCrumb(active){
+  [btnWorld,btnJapan,btnAomori].forEach(b=>b.classList.remove('on'));
+  active.classList.add('on');
+}
+function showWorld(){
+  stage.classList.remove('world-zoomed');
+  worldLayer.classList.remove('hide');
+  aomoriLayer.classList.add('hide');
+  setCrumb(btnWorld);
+  hint.innerHTML = '點一下地圖上的<b style="color:var(--terra)">日本</b>，看看這次要去哪裡 ✈';
+}
+function showJapan(){
+  worldLayer.classList.remove('hide');
+  aomoriLayer.classList.add('hide');
+  stage.classList.add('world-zoomed');
+  setCrumb(btnJapan);
+  hint.innerHTML = '放大中…本州最北端的 <b style="color:var(--terra)">青森縣</b>，再點一下進縣內地圖';
+}
+function showAomori(){
+  worldLayer.classList.add('hide');
+  aomoriLayer.classList.remove('hide');
+  setCrumb(btnAomori);
+  hint.innerHTML = '點地圖上的 <b style="color:var(--terra)">圖釘</b>，直接跳到該天行程 📍';
+}
+btnWorld.addEventListener('click', showWorld);
+btnJapan.addEventListener('click', showJapan);
+btnAomori.addEventListener('click', showAomori);
+
+document.getElementById('worldSvg').addEventListener('click', ()=>{
+  if(!stage.classList.contains('world-zoomed')){
+    showJapan();
+    setTimeout(showAomori, 1200);
+  } else {
+    showAomori();
+  }
+});
+
+/* ── D3 World Map ── */
+(async function initWorldMap(){
+  try {
+    const world = await d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json");
+    const proj = d3.geoNaturalEarth1().scale(153).translate([480, 270]);
+    const path = d3.geoPath().projection(proj);
+    const g = d3.select("#worldG");
+
+    // All land (merged) – base layer
+    g.append("path")
+      .datum(topojson.feature(world, world.objects.land))
+      .attr("class","land").attr("d", path);
+
+    // Japan highlight (ISO 3166-1 numeric 392)
+    const countries = topojson.feature(world, world.objects.countries);
+    const japan = countries.features.find(f => +f.id === 392);
+    if(japan){
+      g.append("path").datum(japan)
+        .attr("id","japanGroup").attr("class","jp")
+        .attr("d", path).style("cursor","pointer");
+    }
+
+    // Derived screen coords from real lat/lon
+    const tpe = proj([121.0, 23.5]);   // Taiwan (TPE)
+    const aoj = proj([140.6, 40.7]);   // Aomori (AOJ)
+    const mid = proj([132.0, 35.0]);   // arc midpoint (offset for curve)
+
+    // Taiwan island marker
+    g.append("ellipse")
+      .attr("cx", tpe[0]).attr("cy", tpe[1])
+      .attr("rx",5).attr("ry",8)
+      .attr("fill","#84926f").attr("stroke","#6d7a5b").attr("stroke-width",1.5);
+    g.append("text")
+      .attr("x", tpe[0]-32).attr("y", tpe[1]+16)
+      .attr("style","font-family:var(--sans);font-size:11px;fill:#5c7345;font-weight:700")
+      .text("台灣");
+
+    // Aomori marker
+    g.append("circle")
+      .attr("cx", aoj[0]).attr("cy", aoj[1]).attr("r",4)
+      .attr("fill","#fffdf7").attr("stroke","#a05538").attr("stroke-width",1.5);
+    g.append("text")
+      .attr("x", aoj[0]-30).attr("y", aoj[1]-9)
+      .attr("style","font-family:var(--sans);font-size:10px;fill:#46557a;font-weight:700")
+      .text("★ 青森");
+
+    // Japan label
+    const jpLabel = proj([138.5, 36.5]);
+    g.append("text")
+      .attr("x", jpLabel[0]+14).attr("y", jpLabel[1]+6)
+      .attr("style","font-family:var(--sans);font-size:12px;fill:#a05538;font-weight:700")
+      .text("日本");
+
+    // Flight arc TPE → AOJ
+    g.append("path")
+      .attr("class","flight-arc")
+      .attr("d",`M${tpe[0]},${tpe[1]} Q${mid[0]},${mid[1]} ${aoj[0]},${aoj[1]}`);
+    g.append("text")
+      .attr("x", mid[0]+4).attr("y", mid[1]-6)
+      .attr("style","font-family:var(--sans);font-size:9px;fill:#46557a")
+      .text("BR122 ✈ 3h25m");
+
+    // Ocean labels
+    [["PACIFIC OCEAN",110,310],["ATLANTIC",345,290],["INDIAN OCEAN",615,375]]
+      .forEach(([t,x,y])=>{
+        g.append("text").attr("class","sea-label").attr("x",x).attr("y",y).text(t);
+      });
+
+  } catch(e){ console.warn("World map load failed:", e); }
+})();
+
+/* pins → scroll to day & open it */
+document.querySelectorAll('.pin').forEach(pin=>{
+  pin.addEventListener('click', e=>{
+    e.stopPropagation();
+    const day = document.getElementById(pin.dataset.day);
+    if(day){
+      day.classList.add('open');
+      day.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  });
+});
+
+/* ── Checklist persistence ── */
+const KEY = 'aomori2026-checklist';
+let saved = {};
+try { saved = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e){}
+document.querySelectorAll('#ckGrid input[type=checkbox]').forEach(cb=>{
+  if(saved[cb.dataset.k]) cb.checked = true;
+  cb.addEventListener('change', ()=>{
+    saved[cb.dataset.k] = cb.checked;
+    try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch(e){}
+  });
+});
+
+/* ── Shopping List System ── */
+const defaultShopItems = [
+  // 🎮 扭蛋/公仔
+  { id: 'toy_aitsu', name: 'あitsu 公仔 (あいつ)', cat: 'toy', img: '購物清單/LINE_ALBUM_青森_260611_1.jpg', loc: '萬代 (D1) / 五所川原 ELM (D3)', type: 'LINE相簿' },
+  { id: 'toy_shinchan', name: '克雷修因扭蛋 (蠟筆小新壽司)', cat: 'toy', img: '購物清單/LINE_ALBUM_青森_260611_2.jpg', loc: '萬代 (D1) / 五所川原 ELM (D3)', type: 'LINE相簿' },
+  { id: 'toy_turbobaba', name: '膽大黨 高速婆婆貓咪公仔 (ターボババア)', cat: 'toy', img: '購物清單/LINE_ALBUM_青森_260611_3.jpg', loc: '萬代 (D1) / 五所川原 ELM (D3)', type: 'LINE相簿' },
+
+  // 💊 藥妝保健 (有圖片)
+  { id: 'med_liposel', name: 'LIPOSEL 脂質體維他命C', cat: 'medicine', img: '購物清單/LINE_ALBUM_青森_260611_4.jpg', loc: '唐吉訶德 (D1) / 藥妝店', type: 'LINE相簿' },
+  { id: 'med_acneige', name: 'Makiron Acneige 痘痘藥', cat: 'medicine', img: '購物清單/LINE_ALBUM_青森_260611_5.jpg', loc: '唐吉訶德 (D1) / 藥妝店', type: 'LINE相簿' },
+  { id: 'med_pakkun', name: 'Svelty Pakkun 糖質分解酵母', cat: 'medicine', img: '購物清單/LINE_ALBUM_青森_260611_7.jpg', loc: '唐吉訶德 (D1) / 藥妝店', type: 'LINE相簿' },
+  { id: 'med_dhc_meriroto', name: 'DHC 盈盈對策 (下半身消水腫/美腿)', cat: 'medicine', img: '購物清單/LINE_ALBUM_青森_260611_8.jpg', loc: '唐吉訶德 (D1) / 藥妝店', type: 'LINE相簿' },
+  { id: 'med_metabarrier', name: '富士 Fujifilm Metabarrier EX 控糖丸', cat: 'medicine', img: '購物清單/LINE_ALBUM_青森_260611_9.jpg', loc: '唐吉訶德 (D1) / 藥妝店', type: 'LINE相簿' },
+  { id: 'med_molena', name: 'MOLENA 摩利那 唇部修護膏', cat: 'medicine', img: '購物清單/LINE_ALBUM_青森_260611_10.jpg', loc: '唐吉訶德 (D1) / 藥妝店', type: 'LINE相簿' },
+  { id: 'med_pakkun3x', name: 'Svelty 3倍 Pakkun 糖質分解酵母', cat: 'medicine', img: '購物清單/LINE_ALBUM_青森_260611_11.jpg', loc: '唐吉訶德 (D1) / 藥妝店', type: 'LINE相簿' },
+  { id: 'med_dhc_blueberry', name: 'DHC 速攻型藍莓精華 (金盞花/亮眼)', cat: 'medicine', img: '購物清單/LINE_ALBUM_青森_260611_13.jpg', loc: '唐吉訶德 (D1) / 藥妝店', type: 'LINE相簿' },
+  { id: 'med_hepalyse', name: 'Hepalyse 護肝明榮素/護肝藥', cat: 'medicine', img: '購物清單/LINE_ALBUM_青森_260611_15.jpg', loc: '唐吉訶德 (D1) / 藥妝店', type: 'LINE相簿' },
+  // 💊 藥妝保健 (PDF文字)
+  { id: 'med_footpatch', name: '休足時間 / 腳底貼', cat: 'medicine', img: '', loc: '唐吉訶德 (D1) / 藥妝店', type: 'PDF清單' },
+  { id: 'med_interdental', name: '牙尖刷 (No.1 x 1, No.3 x 2)', cat: 'medicine', img: '', loc: '藥妝店 / 超市', type: 'PDF清單' },
+
+  // 👜 服飾配件
+  { id: 'apparel_bag', name: 'Montbell 斜肩包', cat: 'apparel', img: '購物清單/LINE_ALBUM_青森_260611_6.jpg', loc: 'Montbell 弘前店 (D2)', type: 'LINE相簿' },
+  { id: 'apparel_montbell', name: 'Montbell 服飾/配件', cat: 'apparel', img: '', loc: 'Montbell 弘前店 (D2)', type: 'PDF清單' },
+
+  // 🍎 食品伴手禮 (有圖片)
+  { id: 'food_noriten', name: 'のり天 (海苔天婦羅餅乾)', cat: 'food', img: '購物清單/LINE_ALBUM_青森_260611_14.jpg', loc: '超市 / 唐吉訶德 (D1)', type: 'LINE相簿' },
+  { id: 'food_applestick', name: '蘋果條酥派 (Patissier\'s りんごスティック)', cat: 'food', img: '購物清單/LINE_ALBUM_青森_260611_16.jpg', loc: 'ASPAM (D1) / A-Factory (D5)', type: 'LINE相簿' },
+  { id: 'food_applesnack', name: '青森蘋果片/蘋果乾零食', cat: 'food', img: '購物清單/LINE_ALBUM_青森_260611_17.jpg', loc: 'ASPAM (D1) / A-Factory (D5)', type: 'LINE相簿' },
+  { id: 'food_applevinegar', name: '青森蘋果醋', cat: 'food', img: '購物清單/LINE_ALBUM_青森_260611_18.jpg', loc: 'ASPAM (D1) / A-Factory (D5)', type: 'LINE相簿' },
+  { id: 'food_garlic', name: '大蒜仙貝 (青森名產煎餅)', cat: 'food', img: '購物清單/LINE_ALBUM_青森_260611_19.jpg', loc: '八食中心 (D4) / 物產店', type: 'LINE相簿' },
+  // 🍎 食品伴手禮 (PDF文字)
+  { id: 'food_mentaiko', name: '明太子便利包', cat: 'food', img: '', loc: '超市 / 機場伴手禮店', type: 'PDF清單' },
+  { id: 'food_peanuts', name: '花生', cat: 'food', img: '', loc: '八食中心 (D4) / 超市', type: 'PDF清單' },
+  { id: 'food_dryshell', name: '貝類乾貨', cat: 'food', img: '', loc: '八食中心 (D4) / 魚菜市場', type: 'PDF清單' },
+  { id: 'food_codcheese', name: '鱈魚 cheese 條', cat: 'food', img: '', loc: '超市 / 唐吉訶德 (D1)', type: 'PDF清單' },
+  { id: 'food_afactory_cake', name: 'A-Factory 蘋果年輪蛋糕', cat: 'food', img: '', loc: 'A-Factory (D1/D5)', type: 'PDF清單' },
+
+  // 🛒 日用雜貨
+  { id: 'misc_watch', name: '便利商店腕時計 (FamilyMart 限定手錶)', cat: 'misc', img: '購物清單/LINE_ALBUM_青森_260611_12.jpg', loc: '便利商店 (隨時)', type: 'LINE相簿' },
+  { id: 'misc_muji', name: '無印良品 聚酯卡夾/網眼收納袋', cat: 'misc', img: '購物清單/LINE_ALBUM_青森_260612_1.jpg', loc: '五所川原 ELM (D3) / 隨時', type: 'LINE相簿' },
+  { id: 'misc_umbrella', name: '雨傘 (折傘/透明傘備用)', cat: 'misc', img: '', loc: '便利商店 / 百元店', type: 'PDF清單' }
+];
+
+const SHOP_CHECKED_KEY = 'aomori2026-shopping-checked';
+const SHOP_CUSTOM_KEY = 'aomori2026-shopping-custom';
+
+let shopChecked = {};
+let shopCustom = [];
+
+try {
+  shopChecked = JSON.parse(localStorage.getItem(SHOP_CHECKED_KEY) || '{}');
+  shopCustom = JSON.parse(localStorage.getItem(SHOP_CUSTOM_KEY) || '[]');
+} catch (e) {
+  console.error("Failed to load shopping list states:", e);
+}
+
+// Combine default and custom items
+function getActiveItems() {
+  return [...defaultShopItems, ...shopCustom];
+}
+
+// Elements
+const shopGrid = document.getElementById('shopGrid');
+const shopTabs = document.getElementById('shopTabs');
+const shopProgressPct = document.getElementById('shopProgressPct');
+const shopProgressFill = document.getElementById('shopProgressFill');
+const shopLightbox = document.getElementById('shopLightbox');
+const shopLightboxImg = document.getElementById('shopLightboxImg');
+const shopLightboxTitle = document.getElementById('shopLightboxTitle');
+
+let currentShopFilter = 'all';
+
+// Initialize tab filters
+document.querySelectorAll('#shopTabs .shop-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('#shopTabs .shop-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentShopFilter = tab.dataset.cat;
+    renderShopItems();
+  });
+});
+
+// Update category tab counts
+function updateTabCounts() {
+  const items = getActiveItems();
+  const cats = { all: items.length, toy: 0, medicine: 0, apparel: 0, food: 0, misc: 0 };
+  
+  items.forEach(item => {
+    if (cats[item.cat] !== undefined) cats[item.cat]++;
+  });
+  
+  document.querySelectorAll('#shopTabs .shop-tab').forEach(tab => {
+    const cat = tab.dataset.cat;
+    const emojiMap = {
+      all: '全部',
+      toy: '🎮 扭蛋/公仔',
+      medicine: '💊 藥妝保健',
+      apparel: '👜 服飾配件',
+      food: '🍎 食品伴手禮',
+      misc: '🛒 日用雜貨'
+    };
+    tab.textContent = `${emojiMap[cat]} (${cats[cat]})`;
+  });
+}
+
+// Update progress bar
+function updateShopProgress() {
+  const items = getActiveItems();
+  const total = items.length;
+  let checkedCount = 0;
+  
+  items.forEach(item => {
+    if (shopChecked[item.id]) checkedCount++;
+  });
+  
+  const pct = total > 0 ? Math.round((checkedCount / total) * 100) : 0;
+  shopProgressPct.textContent = `${pct}% (${checkedCount} / ${total})`;
+  shopProgressFill.style.width = `${pct}%`;
+}
+
+// Render shopping list items
+function renderShopItems() {
+  shopGrid.innerHTML = '';
+  const items = getActiveItems();
+  
+  const filtered = items.filter(item => currentShopFilter === 'all' || item.cat === currentShopFilter);
+  
+  if (filtered.length === 0) {
+    shopGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--ink-soft); padding: 30px; font-size: 0.9rem;">此分類目前無項目</div>';
+    return;
+  }
+  
+  filtered.forEach(item => {
+    const isChecked = !!shopChecked[item.id];
+    const itemCard = document.createElement('div');
+    itemCard.className = `shop-item${isChecked ? ' checked' : ''}`;
+    itemCard.dataset.id = item.id;
+    
+    // Photo HTML
+    let photoHTML = '';
+    if (item.img) {
+      photoHTML = `
+        <div class="shop-item-photo" onclick="openLightbox('${item.img}', '${item.name.replace(/'/g, "\\'")}')">
+          <img src="${item.img}" alt="${item.name}" loading="lazy">
+        </div>
+      `;
+    } else {
+      const emojiMap = { toy: '🎮', medicine: '💊', apparel: '👜', food: '🍎', misc: '🛒' };
+      const emoji = emojiMap[item.cat] || '🛒';
+      photoHTML = `
+        <div class="shop-item-photo-placeholder">
+          <span>${emoji}</span>
+        </div>
+      `;
+    }
+    
+    // Suggestion tags
+    let tagsHTML = '';
+    if (item.loc) {
+      tagsHTML += `<span class="shop-item-tag loc">📍 ${item.loc}</span>`;
+    }
+    tagsHTML += `<span class="shop-item-tag source">${item.type}</span>`;
+    
+    // Delete button for custom items
+    const isCustom = item.id.startsWith('custom_');
+    const deleteBtnHTML = isCustom ? `<button class="shop-item-delete-btn" onclick="deleteCustomItem('${item.id}', event)">&times;</button>` : '';
+    
+    itemCard.innerHTML = `
+      ${deleteBtnHTML}
+      ${photoHTML}
+      <div class="shop-item-content">
+        <label class="shop-item-check-wrap" onclick="toggleShopItem('${item.id}', event)">
+          <input type="checkbox" class="shop-item-checkbox" ${isChecked ? 'checked' : ''}>
+          <span class="shop-item-box"></span>
+          <span class="shop-item-title">${item.name}</span>
+        </label>
+        <div class="shop-item-meta">
+          ${tagsHTML}
+        </div>
+      </div>
+    `;
+    
+    shopGrid.appendChild(itemCard);
+  });
+}
+
+// Toggle checklist item
+function toggleShopItem(id, event) {
+  if (event.target.tagName === 'INPUT') return;
+  event.preventDefault();
+  
+  shopChecked[id] = !shopChecked[id];
+  try {
+    localStorage.setItem(SHOP_CHECKED_KEY, JSON.stringify(shopChecked));
+  } catch (e) {}
+  
+  const card = document.querySelector(`.shop-item[data-id="${id}"]`);
+  if (card) {
+    card.classList.toggle('checked', shopChecked[id]);
+    const checkbox = card.querySelector('.shop-item-checkbox');
+    if (checkbox) checkbox.checked = shopChecked[id];
+  }
+  
+  updateShopProgress();
+}
+
+// Lightbox modal controls
+function openLightbox(imgSrc, title) {
+  shopLightboxImg.src = imgSrc;
+  shopLightboxTitle.textContent = title;
+  shopLightbox.classList.add('active');
+}
+
+function closeLightbox() {
+  shopLightbox.classList.remove('active');
+}
+
+// Close lightbox on Escape key
+window.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeLightbox();
+  }
+});
+
+// Add custom item
+function addCustomItem() {
+  const nameInput = document.getElementById('shopInputName');
+  const catSelect = document.getElementById('shopSelectCat');
+  const locInput = document.getElementById('shopInputLoc');
+  
+  const name = nameInput.value.trim();
+  const cat = catSelect.value;
+  const loc = locInput.value.trim();
+  
+  if (!name) return;
+  
+  const newItem = {
+    id: 'custom_' + Date.now(),
+    name: name,
+    cat: cat,
+    img: '',
+    loc: loc,
+    type: '自訂項目'
+  };
+  
+  shopCustom.push(newItem);
+  try {
+    localStorage.setItem(SHOP_CUSTOM_KEY, JSON.stringify(shopCustom));
+  } catch (e) {}
+  
+  nameInput.value = '';
+  locInput.value = '';
+  
+  updateTabCounts();
+  updateShopProgress();
+  renderShopItems();
+}
+
+// Delete custom item
+function deleteCustomItem(id, event) {
+  event.stopPropagation();
+  event.preventDefault();
+  
+  if (!confirm('確定要刪除此自訂項目嗎？')) return;
+  
+  shopCustom = shopCustom.filter(item => item.id !== id);
+  delete shopChecked[id];
+  
+  try {
+    localStorage.setItem(SHOP_CUSTOM_KEY, JSON.stringify(shopCustom));
+    localStorage.setItem(SHOP_CHECKED_KEY, JSON.stringify(shopChecked));
+  } catch (e) {}
+  
+  updateTabCounts();
+  updateShopProgress();
+  renderShopItems();
+}
+
+// Reset checklist state
+document.getElementById('shopBtnReset').addEventListener('click', () => {
+  if (!confirm('確定要清除所有勾選狀態嗎？')) return;
+  shopChecked = {};
+  try {
+    localStorage.setItem(SHOP_CHECKED_KEY, JSON.stringify(shopChecked));
+  } catch (e) {}
+  
+  updateShopProgress();
+  renderShopItems();
+});
+
+// Initial boot
+updateTabCounts();
+updateShopProgress();
+renderShopItems();
+</script>
+</body>
+</html>
