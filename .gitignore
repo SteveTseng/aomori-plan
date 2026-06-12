@@ -1,0 +1,16 @@
+# 忽略所有 PDF 機密文件（包含機票、飯店確認單、租車單等）
+*.pdf
+/購物清單/購物清單.pdf
+
+# 忽略 Mac 系統垃圾檔與暫存檔
+.DS_Store
+Thumps.db
+
+# 忽略 Apple Pages 編輯檔
+*.pages
+
+# 忽略測試及開發工具暫存
+.playwright-mcp/
+CLAUDE.md
+test_images.html
+inspect_new_image.html
